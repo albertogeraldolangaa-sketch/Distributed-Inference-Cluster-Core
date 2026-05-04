@@ -107,36 +107,11 @@ Outros backends podem ser adicionados conforme o ambiente e o tipo de inferênci
 Clone o repositório:
 
 ```bash
-git clone https://github.com/seu-usuario/distributed-inference-cluster-core.git
+git clone  https://github.com/albertogeraldolangaa-sketch/distributed-inference-cluster-core.git
 cd distributed-inference-cluster-core
 ```
 
-Crie e ative o ambiente virtual:
-
-```bash
-python -m venv .venv
-```
-
-No Windows:
-
-```bash
-.venv\Scripts\activate
-```
-
-No Linux/macOS:
-
-```bash
-source .venv/bin/activate
-```
-
-Instale as dependências:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
+ 
 ## Como Usar
 
 ### 1. Iniciar o Orquestrador
@@ -230,7 +205,7 @@ curl -X POST http://127.0.0.1:8000/submit \
 
 ## Autor
 
-Desenvolvido por **Alberto "Beto" Langa**
+Desenvolvido por **Alberto Langa**
 Soluções em infraestrutura distribuída, inteligência artificial e automação.
 
 ---
