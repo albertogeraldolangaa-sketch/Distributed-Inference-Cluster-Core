@@ -3,12 +3,6 @@ Claro — aqui vai uma versão mais forte, limpa e profissional do `README.md`, 
 ````markdown
 # Distributed Inference Cluster Core
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![Python](https://img.shields.io/badge/python-3.10%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Architecture](https://img.shields.io/badge/architecture-distributed-orange)
-![Status](https://img.shields.io/badge/status-active-success)
-
 Solução de infraestrutura distribuída para inferência em rede local (**LAN**), projetada para orquestrar cargas de trabalho de **LLM**, **TTS** e outros pipelines de IA com foco em eficiência, modularidade e baixa latência.
 
 O projeto foi desenhado para operar como núcleo de um cluster distribuído, integrando:
