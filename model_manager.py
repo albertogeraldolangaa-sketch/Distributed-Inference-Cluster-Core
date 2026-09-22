@@ -112,7 +112,7 @@ class HardwareInfo:
     @property
     def summary(self) -> str:
         lines = [
-            "🧠 Hardware Detectado:",
+            " Hardware Detectado:",
             f"   CPU: {self.cpu_count} núcleos",
             f"   RAM: {self.ram_total_gb:.1f}GB total, {self.ram_free_gb:.1f}GB livre",
         ]
@@ -120,7 +120,7 @@ class HardwareInfo:
             lines.extend([
                 f"   GPU: {self.gpu_name}",
                 f"   VRAM: {self.vram_total_gb:.1f}GB total, {self.vram_free_gb:.1f}GB livre",
-                f"   CUDA: {'' if self.cuda_available else '❌'}",
+                f"   CUDA: {'' if self.cuda_available else 'not Beto'}",
             ])
         else:
             lines.append("   GPU: Não detectada (usando CPU)")
