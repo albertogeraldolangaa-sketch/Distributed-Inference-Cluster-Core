@@ -120,13 +120,13 @@ class HardwareInfo:
             lines.extend([
                 f"   GPU: {self.gpu_name}",
                 f"   VRAM: {self.vram_total_gb:.1f}GB total, {self.vram_free_gb:.1f}GB livre",
-                f"   CUDA: {'✅' if self.cuda_available else '❌'}",
+                f"   CUDA: {'' if self.cuda_available else '❌'}",
             ])
         else:
-            lines.append("   GPU: ❌ Não detectada (usando CPU)")
+            lines.append("   GPU: Não detectada (usando CPU)")
         lines.append(f"   Perfil: {self.profile.value.upper()}")
         if self.is_colab:
-            lines.append("   🚀 Modo Colab otimizado ativado")
+            lines.append("    Modo Colab otimizado ativado")
         return "\n".join(lines)
 
 
@@ -355,7 +355,7 @@ class SmartModelLoader:
             "inference_count": 0,
             "total_tokens_generated": 0,
         }
-        logger.info("📦 SmartModelLoader inicializado")
+        logger.info("  SmartModelLoader inicializado")
         logger.info("   Modelo: %s", Path(model_path).name)
         logger.info("   Tipo: %s", self.config.model_type.value.upper())
         logger.info("   Perfil: %s", self.config.profile.value)
@@ -381,7 +381,7 @@ class SmartModelLoader:
             return False, None, f"Modelo não encontrado: {self.model_path}"
         try:
             from llama_cpp import Llama  # type: ignore
-            logger.info("📦 Carregando modelo %s", Path(self.model_path).name)
+            logger.info(" Carregando modelo %s", Path(self.model_path).name)
             start = time.time()
             kwargs: Dict[str, Any] = {
                 "model_path": self.model_path,
@@ -401,7 +401,7 @@ class SmartModelLoader:
             if self.config.model_type == ModelType.LLAMA:
                 kwargs["chat_format"] = "llama-3"
             model = Llama(**kwargs)
-            logger.info("✅ Modelo carregado em %.2fs", time.time() - start)
+            logger.info(" Modelo carregado em %.2fs", time.time() - start)
             return True, model, None
         except ImportError as e:
             return False, None, f"llama-cpp-python não instalado: {e}"
@@ -413,7 +413,7 @@ class SmartModelLoader:
             model("Olá, tudo bem?", max_tokens=5, temperature=0.1, echo=False)
             return True
         except Exception as e:
-            logger.warning("⚠️ Warmup falhou: %s", e)
+            logger.warning(" Warmup falhou: %s", e)
             return False
 
     def get_model(self) -> Optional[Any]:
@@ -445,12 +445,12 @@ class SmartModelLoader:
                 self._status = ModelStatus.LOADED
                 self._load_time = time.time()
                 self.stats["successful_loads"] += 1
-                logger.info("✅ Modelo pronto para uso")
+                logger.info(" Modelo pronto para uso")
                 return model
             self._status = ModelStatus.FAILED
             self._load_error = error
             self.stats["failed_loads"] += 1
-            logger.error("❌ Falha no carregamento: %s", error)
+            logger.error(" Falha no carregamento: %s", error)
             return None
 
     def _trim_history_messages(self, messages: List[Dict[str, str]], limit: int = 8) -> List[Dict[str, str]]:
@@ -508,7 +508,7 @@ class SmartModelLoader:
             return None
 
     def generate(self, prompt: str, **kwargs) -> str:
-        logger.info('💡 Gerando texto LLM | chars=%d', len((prompt or '')))
+        logger.info(' Gerando texto LLM | chars=%d', len((prompt or '')))
         result = self._invoke(prompt, **kwargs)
         if result is None:
             return ""
@@ -596,10 +596,10 @@ class ModelManager:
                 ),
             )
             default_model = preferred[0][1]
-            logger.info("🎯 Selecionando %s como modelo padrão", Path(default_model).name)
+            logger.info(" Selecionando %s como modelo padrão", Path(default_model).name)
             self.default_loader = self._create_loader(default_model)
         else:
-            logger.warning("⚠️ Nenhum modelo .gguf encontrado na pasta 'models/'")
+            logger.warning(" Nenhum modelo .gguf encontrado na pasta 'models/'")
 
     def _find_models(self) -> Dict[str, str]:
         models: Dict[str, str] = {}
@@ -654,7 +654,7 @@ class ModelManager:
         return None
 
     def chat_stream(self, messages: List[Dict[str, str]], model_name: Optional[str] = None, **kwargs) -> Iterator[str]:
-        logger.info('💡 Gerando texto LLM em streaming | mensagens=%d', len(messages or []))
+        logger.info(' Gerando texto LLM em streaming | mensagens=%d', len(messages or []))
         loader = self.get_loader(model_name)
         if loader:
             trimmed = self._trim_history(messages)
@@ -664,11 +664,11 @@ class ModelManager:
 
     def unload_all(self) -> None:
         for name, loader in list(self.loaders.items()):
-            logger.info("📤 Descarregando %s...", name)
+            logger.info(" Descarregando %s...", name)
             loader.unload_model()
         if self.default_loader and self.default_loader not in self.loaders.values():
             self.default_loader.unload_model()
-        logger.info("✅ Todos os modelos descarregados")
+        logger.info(" Todos os modelos descarregados")
 
     def get_status(self) -> Dict[str, Any]:
         return {
@@ -690,7 +690,7 @@ class ModelManager:
 
     def generate_fallback_response(self, prompt: str) -> str:
         prompt = " ".join((prompt or "").split())
-        logger.info('💡 Fallback LLM ativo | chars=%d', len(prompt))
+        logger.info(' Fallback LLM ativo | chars=%d', len(prompt))
         choices = [
             "Estou a processar isso.",
             "Estou a analisar a tua mensagem.",
@@ -708,12 +708,12 @@ def with_model_fallback(model_manager: ModelManager):
             try:
                 model = model_manager.get_model()
                 if model is None:
-                    logger.warning("⚠️ Modelo não disponível, usando fallback")
+                    logger.warning(" Modelo não disponível, usando fallback")
                     return model_manager.generate_fallback_response(prompt)
                 return func(*args, **kwargs, model=model)
             except Exception as e:
                 kind = _classify_model_error(e)
-                logger.error("❌ Erro ao usar modelo (%s): %s", kind, e)
+                logger.error(" Erro ao usar modelo (%s): %s", kind, e)
                 if kind in {"oom", "token_limit"}:
                     try:
                         gc.collect()
